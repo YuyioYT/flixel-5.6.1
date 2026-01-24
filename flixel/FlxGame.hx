@@ -199,6 +199,13 @@ class FlxGame extends Sprite
 	var _startFullscreen:Bool = false;
 	#end
 
+
+	/**
+	 * If a state change was requested, the new state object is stored here until we switch to it.
+	 */
+	var _requestedState:FlxState;
+
+
 	/**
 	 * If a state change was requested, the new state object is stored here until we switch to it.
 	 */
@@ -767,14 +774,15 @@ class FlxGame extends Sprite
 		if (FlxG.fixedTimestep)
 		{
 			FlxG.elapsed = FlxG.timeScale * _stepSeconds; // fixed timestep
+			FlxG.rawElapsed = _stepSeconds;
 		}
 		else
 		{
-			FlxG.elapsed = FlxG.timeScale * (_elapsedMS / 1000); // variable timestep
+			FlxG.rawElapsed = _elapsedMS / 1000; // variable timestep
+			if (FlxG.rawElapsed > FlxG.maxElapsed)
+				FlxG.rawElapsed = FlxG.maxElapsed;
 
-			var max = FlxG.maxElapsed * FlxG.timeScale;
-			if (FlxG.elapsed > max)
-				FlxG.elapsed = max;
+			FlxG.elapsed = FlxG.timeScale * FlxG.rawElapsed;
 		}
 	}
 

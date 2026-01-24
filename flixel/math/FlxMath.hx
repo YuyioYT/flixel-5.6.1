@@ -92,6 +92,17 @@ class FlxMath
 	}
 
 	/**
+	 * Custom modulo function that handles floating point values correctly
+	 * Similar to FlxMath.mod - returns the remainder of a / b
+	 * @param a The dividend
+	 * @param b The divisor
+	 * @return The remainder of a / b
+	 */
+	public static inline function mod(a:Float, b:Float):Float {
+		return a - Math.floor(a / b) * b;
+	}
+
+	/**
 	 * Returns the linear interpolation of two numbers if `ratio`
 	 * is between 0 and 1, and the linear extrapolation otherwise.
 	 *

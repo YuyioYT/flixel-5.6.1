@@ -290,59 +290,69 @@ class FlxTypedGroup<T:FlxBasic> extends FlxBasic
 	 * WARNING: If this function needs to create a new object, and no object class was provided,
 	 * it will return `null` instead of a valid object!
 	 *
-	 * @param   objectClass    The class type you want to recycle (e.g. `FlxSprite`, `EvilRobot`, etc).
-	 * @param   objectFactory  Optional factory function to create a new object
-	 *                         if there aren't any dead members to recycle.
-	 *                         If `null`, `Type.createInstance()` is used,
-	 *                         which requires the class to have no constructor parameters.
-	 * @param   force          Force the object to be an `ObjectClass` and not a super class of `ObjectClass`.
-	 * @param   revive         Whether recycled members should automatically be revived
-	 *                         (by calling `revive()` on them).
+	 * @param   ObjectClass     The class type you want to recycle (e.g. `FlxSprite`, `EvilRobot`, etc).
+	 * @param   ObjectFactory   Optional factory function to create a new object
+	 *                          if there aren't any dead members to recycle.
+	 *                          If `null`, `Type.createInstance()` is used,
+	 *                          which requires the class to have no constructor parameters.
+	 * @param   Force           Force the object to be an `ObjectClass` and not a super class of `ObjectClass`.
+	 * @param   Revive          Whether recycled members should automatically be revived
+	 *                          (by calling `revive()` on them).
 	 * @return  A reference to the object that was created.
 	 */
-	public function recycle(?objectClass:Class<T>, ?objectFactory:Void->T, force = false, revive = true):T
+	public function recycle(?ObjectClass:Class<T>, ?ObjectFactory:Void->T, Force:Bool = false, Revive:Bool = true):T
 	{
-		inline function createObject():T
-		{
-			if (objectFactory != null)
-				return add(objectFactory());
-			
-			if (objectClass != null)
-				return add(Type.createInstance(objectClass, []));
-			
-			return null;
-		}
-		
+		var basic:FlxBasic = null;
+
 		// rotated recycling
 		if (maxSize > 0)
 		{
 			// create new instance
 			if (length < maxSize)
-				return createObject();
-			
+			{
+				return recycleCreateObject(ObjectClass, ObjectFactory);
+			}
 			// get the next member if at capacity
-			final basic = members[_marker++];
+			else
+			{
+				basic = members[_marker++];
 
-			if (_marker >= maxSize)
-				_marker = 0;
+				if (_marker >= maxSize)
+					_marker = 0;
 
-			if (revive)
-				basic.revive();
+				if (Revive)
+					basic.revive();
 
-			return cast basic;
+				return cast basic;
+			}
 		}
-		
 		// grow-style recycling - grab a basic with exists == false or create a new one
-		final basic = getFirstAvailable(objectClass, force);
-
-		if (basic != null)
+		else
 		{
-			if (revive)
-				basic.revive();
-			return cast basic;
-		}
+			basic = getFirstAvailable(ObjectClass, Force);
 
-		return createObject();
+			if (basic != null)
+			{
+				if (Revive)
+					basic.revive();
+				return cast basic;
+			}
+
+			return recycleCreateObject(ObjectClass, ObjectFactory);
+		}
+	}
+
+	@:noCompletion
+	inline function recycleCreateObject(?ObjectClass:Class<T>, ?ObjectFactory:Void->T):T
+	{
+		var object:T = null;
+
+		if (ObjectFactory != null)
+			add(object = ObjectFactory());
+		else if (ObjectClass != null)
+			add(object = Type.createInstance(ObjectClass, []));
+
+		return object;
 	}
 
 	/**

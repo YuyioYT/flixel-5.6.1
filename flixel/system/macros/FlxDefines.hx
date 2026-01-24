@@ -37,6 +37,7 @@ private enum UserDefines
 	FLX_NO_POINT_POOL;
 	FLX_NO_PITCH;
 	FLX_NO_SAVE;
+	FLX_NO_GENERIC;
 }
 
 /**
@@ -77,6 +78,7 @@ private enum HelperDefines
 	/* Used in HaxeFlixel CI, should have no effect on personal projects */
 	FLX_NO_CI;
 	FLX_SAVE;
+	FLX_GENERIC;
 }
 
 class FlxDefines
@@ -169,6 +171,7 @@ class FlxDefines
 		defineInversion(FLX_UNIT_TEST, FLX_NO_UNIT_TEST);
 		defineInversion(FLX_COVERAGE_TEST, FLX_NO_COVERAGE_TEST);
 		defineInversion(FLX_SWF_VERSION_TEST, FLX_NO_SWF_VERSION_TEST);
+		defineInversion(FLX_NO_GENERIC, FLX_GENERIC);
 	}
 
 	static function defineHelperDefines()
