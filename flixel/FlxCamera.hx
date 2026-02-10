@@ -639,6 +639,15 @@ class FlxCamera extends FlxBasic
 	}
 
 	/**
+	 * Clears all shaders/filters from the camera
+	 */
+	public function clearShaders()
+	{
+		_filters = [];
+		filters = [];
+	}
+
+	/**
 	 * Removes a FlxShader's ShaderFilter from the camera.
 	 * @param shader Shader to remove
 	 * @return Whenever the shader has been successfully removed or not.
