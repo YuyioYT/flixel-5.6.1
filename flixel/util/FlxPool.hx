@@ -41,6 +41,10 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 
 	var _pool:Array<T> = [];
 	var _constructor:()->T;
+	var balance = 0;
+	var made = 0;
+	var putted = 0;
+	var gotten = 0;
 
 	/**
 	 * Objects aren't actually removed from the array in order to improve performance.
@@ -61,10 +65,14 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 
 	public function get():T
 	{
+		balance--;
+
 		if (_count == 0)
 		{
+			made++;
 			return _constructor();
 		}
+		gotten++;
 		return _pool[--_count];
 	}
 
@@ -77,6 +85,8 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 			// if the object's spot in the pool was overwritten, or if it's at or past _count (in the inaccessible zone)
 			if (i == -1 || i >= _count)
 			{
+				balance++;
+				putted++;
 				obj.destroy();
 				_pool[_count++] = obj;
 			}
@@ -87,6 +97,8 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 	{
 		if (obj != null)
 		{
+			balance++;
+			putted++;
 			obj.destroy();
 			_pool[_count++] = obj;
 		}
@@ -96,12 +108,19 @@ class FlxPool<T:IFlxDestroyable> implements IFlxPool<T>
 	{
 		while (numObjects-- > 0)
 		{
+			balance++;
+			made++;
+			putted++;
 			_pool[_count++] = _constructor();
 		}
 	}
 
 	public function clear():Array<T>
 	{
+		balance = 0;
+		made = 0;
+		putted = 0;
+
 		_count = 0;
 		var oldPool = _pool;
 		_pool = [];
