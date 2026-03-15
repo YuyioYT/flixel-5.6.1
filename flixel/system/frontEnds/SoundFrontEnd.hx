@@ -39,6 +39,11 @@ class SoundFrontEnd
 
 	#if FLX_KEYBOARD
 	/**
+	 * Wether volume control by keys is allowed
+	 */
+	public var keysAllowed:Bool = true;
+
+	/**
 	 * The key codes used to increase volume (see FlxG.keys for the keys available).
 	 * Default keys: + (and numpad +). Set to null to deactivate.
 	 */
@@ -387,12 +392,15 @@ class SoundFrontEnd
 			list.update(elapsed);
 
 		#if FLX_KEYBOARD
-		if (FlxG.keys.anyJustReleased(muteKeys))
-			toggleMuted();
-		else if (FlxG.keys.anyJustReleased(volumeUpKeys))
-			changeVolume(0.1);
-		else if (FlxG.keys.anyJustReleased(volumeDownKeys))
-			changeVolume(-0.1);
+		if (keysAllowed)
+		{
+			if (FlxG.keys.anyJustReleased(muteKeys))
+				toggleMuted();
+			else if (FlxG.keys.anyJustReleased(volumeUpKeys))
+				changeVolume(0.1);
+			else if (FlxG.keys.anyJustReleased(volumeDownKeys))
+				changeVolume(-0.1);
+		}
 		#end
 	}
 
